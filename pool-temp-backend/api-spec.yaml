@@ -1,0 +1,85 @@
+openapi: 3.0.1
+info:
+  title: PoolTemp API V1
+  version: 1.0.0
+servers:
+  - url: /api/v1
+paths:
+  /measurements:
+    post:
+      tags:
+        - measurements
+      description: Create a new measurement
+      requestBody:
+        $ref: '#/components/requestBodies/MeasurementRequest'
+      responses:
+        201:
+          $ref: '#/components/responses/MeasurementResponse'
+        400:
+          $ref: '#/components/responses/ErrorResponse'
+        500:
+          $ref: '#/components/responses/ErrorResponse'
+
+  /measurements/current:
+    get:
+      tags:
+        - measurements
+      description: Get the current temperature
+      responses:
+        200:
+          $ref: '#/components/responses/MeasurementResponse'
+        404:
+          $ref: '#/components/responses/ErrorResponse'
+        500:
+          $ref: '#/components/responses/ErrorResponse'
+
+components:
+  requestBodies:
+    MeasurementRequest:
+      description: Represents a single measurement
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Measurement'
+
+  responses:
+    MeasurementResponse:
+      description: Represents a single measurement
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Measurement'
+
+    ErrorResponse:
+      description: Error response
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponseBody'
+
+  schemas:
+    Measurement:
+      required:
+        - value
+        - timestamp
+      properties:
+        value:
+          type: number
+          format: decimal
+          example: 20.3
+        timestamp:
+          type: string
+          format: date-time
+          example: 2017-07-21T17:32:28Z
+
+    ErrorResponseBody:
+      properties:
+        statusCode:
+          type: number
+          example: 500
+        message:
+          type: string
+          example: 'Internal server error'
+        error:
+          type: string
+          example: 'Internal server error'

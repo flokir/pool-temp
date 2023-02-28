@@ -1,8 +1,7 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { MeasurementModule } from './measurement/measurement.module';
 import { RouterModule } from '@nestjs/core';
+import { DatabaseModule } from './database/database.module';
 
 @Module({
   imports: [
@@ -18,8 +17,7 @@ import { RouterModule } from '@nestjs/core';
         ],
       },
     ]),
+    DatabaseModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
 })
 export class AppModule {}
