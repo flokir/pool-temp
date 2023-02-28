@@ -12,4 +12,6 @@ RUN yarn run build
 
 USER node
 
+EXPOSE 3000
+
 CMD ["yarn", "run", "start:prod"]

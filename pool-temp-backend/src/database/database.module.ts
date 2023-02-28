@@ -5,8 +5,12 @@ import { MeasurementEntity } from '../measurement/measurement.entity';
 @Module({
   imports: [
     TypeOrmModule.forRoot({
-      type: 'sqlite',
-      database: ':memory:',
+      type: 'postgres',
+      database: 'mydb',
+      host: 'db',
+      port: 5432,
+      username: 'myuser',
+      password: 'mypassword',
       entities: [MeasurementEntity],
       synchronize: true,
     }),
