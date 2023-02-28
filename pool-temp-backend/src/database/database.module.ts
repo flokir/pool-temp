@@ -6,7 +6,7 @@ import { MeasurementEntity } from '../measurement/measurement.entity';
   imports: [
     TypeOrmModule.forRoot({
       type: 'sqlite',
-      database: 'pool-temp.sqlite',
+      database: ':memory:',
       entities: [MeasurementEntity],
       synchronize: true,
     }),
