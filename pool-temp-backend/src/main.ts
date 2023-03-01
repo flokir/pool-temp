@@ -9,6 +9,9 @@ async function bootstrap() {
       transform: true,
     }),
   );
+  app.enableCors({
+    origin: (requestOrigin, callback) => callback(null, true),
+  });
   await app.listen(3000);
 }
 bootstrap();
