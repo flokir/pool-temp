@@ -1,37 +1,58 @@
 import Head from "next/head";
 import Image from "next/image";
 import { Inter } from "next/font/google";
+import { useEffect, useState } from "react";
+import * as process from "process";
+import { stdout } from "process";
+import { getEndpointUrl } from "@/utils/api-utils";
 
 const inter = Inter({ subsets: ["latin"] });
 
-export async function getServerSideProps() {
-  const res = await fetch("http://backend:3000/api/v1/measurements/current");
-  const measurement = await res.json();
-  const parsedTimestamp: Date = new Date(Date.parse(measurement.timestamp));
-  return {
-    props: {
+async function fetchCurrentTemperature() {
+  console.log(window.location.hostname);
+  const res = await fetch(getEndpointUrl("/api/v1/measurements/current"));
+  if (res.ok) {
+    const measurement = await res.json();
+    return {
       temperature: measurement.value,
-      localeTimestamp: parsedTimestamp.toLocaleString(),
-      minutesDifference: calculateMinutesAgo(parsedTimestamp),
-    },
-  };
+      timestamp: new Date(Date.parse(measurement.timestamp)),
+    };
+  }
+  return undefined;
 }
-
 function calculateMinutesAgo(otherDate: Date): number {
   const currentDate: Date = new Date();
   const difference = currentDate.getTime() - otherDate.getTime();
   return Math.floor(difference / 1000 / 60);
 }
 
-export default function Home({
-  minutesDifference,
-  temperature,
-  localeTimestamp,
-}: {
-  minutesDifference: number;
-  temperature: number;
-  localeTimestamp: string;
-}) {
+export default function Home({ test }: { test: string }) {
+  const [isLoading, setIsLoading] = useState(true);
+  const [displayCurrentTemperature, setDisplayCurrentTemperature] =
+    useState(false);
+  const [currentTemperature, setCurrentTemperature] = useState<{
+    temperature?: number;
+    timestamp?: Date;
+    minutesAgo: number;
+  }>({
+    minutesAgo: 0,
+  });
+  useEffect(() => {
+    (async () => {
+      const currentTemperature = await fetchCurrentTemperature();
+      if (currentTemperature) {
+        setIsLoading(false);
+        setDisplayCurrentTemperature(true);
+        setCurrentTemperature({
+          ...currentTemperature,
+          minutesAgo: calculateMinutesAgo(currentTemperature.timestamp),
+        });
+        return;
+      }
+      setIsLoading(false);
+      setDisplayCurrentTemperature(false);
+    })();
+  }, []);
   return (
     <>
       <Head>
@@ -40,14 +61,25 @@ export default function Home({
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-
       <div className="container m-8">
-        <p className="text-2xl">Current temperature: {temperature}°C</p>
-        <p>Measurement taken: {localeTimestamp}</p>
-        {minutesDifference < 60 && minutesDifference > 0 && (
-          <p>{minutesDifference} Minutes ago</p>
+        {isLoading && <p>Loading</p>}
+        {!isLoading && !displayCurrentTemperature && <p>No data found</p>}
+        {displayCurrentTemperature && (
+          <>
+            <p className="text-2xl">
+              Current temperature: {currentTemperature.temperature}°C
+            </p>
+            <p>
+              Measurement taken:{" "}
+              {currentTemperature.timestamp?.toLocaleString()}
+            </p>
+            {currentTemperature.minutesAgo < 60 &&
+              currentTemperature.minutesAgo > 0 && (
+                <p>{currentTemperature.minutesAgo} minutes ago</p>
+              )}
+            {currentTemperature.minutesAgo === 0 && <p>Just now</p>}
+          </>
         )}
-        {minutesDifference === 0 && <p>Just now</p>}
       </div>
     </>
   );
