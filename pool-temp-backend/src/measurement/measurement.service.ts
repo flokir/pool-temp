@@ -25,6 +25,14 @@ export class MeasurementService {
     throw new NotFoundException();
   }
 
+  public async searchMeasurements() {
+    return this.measurementRepository.find({
+      order: {
+        timestamp: 'desc',
+      },
+    });
+  }
+
   public async createMeasurement(
     entity: MeasurementEntity,
   ): Promise<MeasurementEntity> {

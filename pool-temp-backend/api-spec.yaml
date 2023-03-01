@@ -20,6 +20,34 @@ paths:
         500:
           $ref: '#/components/responses/ErrorResponse'
 
+    get:
+      tags:
+        - measurements
+      description: Query existing measurements, ordered by timestamp descending, between start and end date
+      parameters:
+        - in: query
+          name: startDate
+          schema:
+            type: string
+            format: date-time
+            example: 2017-07-21T17:32:28Z
+          required: false
+        - in: query
+          name: endDate
+          schema:
+            type: string
+            format: date-time
+            example: 2017-07-21T17:32:28Z
+          required: false
+      responses:
+        200:
+          $ref: '#/components/responses/MeasurementListResponse'
+        400:
+          $ref: '#/components/responses/ErrorResponse'
+        500:
+          $ref: '#/components/responses/ErrorResponse'
+
+
   /measurements/current:
     get:
       tags:
@@ -43,6 +71,17 @@ components:
             $ref: '#/components/schemas/Measurement'
 
   responses:
+    MeasurementListResponse:
+      description: Represents a single measurement
+      content:
+        application/json:
+          schema:
+            properties:
+              items:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Measurement'
+
     MeasurementResponse:
       description: Represents a single measurement
       content:
