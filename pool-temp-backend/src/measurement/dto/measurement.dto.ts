@@ -1,5 +1,11 @@
 import { MeasurementEntity } from '../measurement.entity';
-import { IsDate, IsDateString, IsDecimal, IsNumber } from 'class-validator';
+import {
+  IsDate,
+  IsDateString,
+  IsDecimal,
+  IsNumber,
+  IsOptional,
+} from 'class-validator';
 import { Type } from 'class-transformer';
 
 export class MeasurementDto {
@@ -8,7 +14,8 @@ export class MeasurementDto {
 
   @Type(() => Date)
   @IsDate()
-  timestamp: Date;
+  @IsOptional()
+  timestamp: Date = new Date(); // if no timestamp is given, use the current time
 
   public static mapToMeasurement(dto: MeasurementDto): MeasurementEntity {
     return new MeasurementEntity({
