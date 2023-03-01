@@ -6,3 +6,4 @@ docker.env
 pool-temp.sqlite
 .idea
 data
+.env.local

@@ -18,6 +18,13 @@ services:
       - web
     depends_on:
       - db
+    environment:
+      - DB_NAME=mydb
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_USER=myuser
+      - DB_PASSWORD=mypassword
+
 
   db:
     image: postgres
@@ -30,6 +37,8 @@ services:
       - ./data:/var/lib/postgresql/data
     networks:
       - postgres
+    ports:
+      - "5432:5432"
 
 networks:
   postgres:
