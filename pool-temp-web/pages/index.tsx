@@ -7,10 +7,12 @@ const inter = Inter({ subsets: ["latin"] });
 export async function getServerSideProps() {
   const res = await fetch("http://backend:3000/api/v1/measurements/current");
   const measurement = await res.json();
+  const parsedTimestamp: Date = new Date(Date.parse(measurement.timestamp));
   return {
     props: {
       temperature: measurement.value,
-      timestamp: measurement.timestamp,
+      localeTimestamp: parsedTimestamp.toLocaleString(),
+      minutesDifference: calculateMinutesAgo(parsedTimestamp),
     },
   };
 }
@@ -22,14 +24,14 @@ function calculateMinutesAgo(otherDate: Date): number {
 }
 
 export default function Home({
+  minutesDifference,
   temperature,
-  timestamp,
+  localeTimestamp,
 }: {
+  minutesDifference: number;
   temperature: number;
-  timestamp: string;
+  localeTimestamp: string;
 }) {
-  const parsedTimestamp: Date = new Date(Date.parse(timestamp));
-  const minutesDifference = calculateMinutesAgo(parsedTimestamp);
   return (
     <>
       <Head>
@@ -41,7 +43,7 @@ export default function Home({
 
       <div className="container m-8">
         <p className="text-2xl">Current temperature: {temperature}°C</p>
-        <p>Measurement taken: {parsedTimestamp.toLocaleString()}</p>
+        <p>Measurement taken: {localeTimestamp}</p>
         {minutesDifference < 60 && minutesDifference > 0 && (
           <p>{minutesDifference} Minutes ago</p>
         )}
