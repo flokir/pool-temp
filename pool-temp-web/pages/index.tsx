@@ -4,16 +4,14 @@ import { Inter } from "next/font/google";
 
 const inter = Inter({ subsets: ["latin"] });
 
-export async function getStaticProps() {
-  const res = await fetch("http://localhost:3001/api/v1/measurements/current");
+export async function getServerSideProps() {
+  const res = await fetch("http://backend:3000/api/v1/measurements/current");
   const measurement = await res.json();
-
   return {
     props: {
       temperature: measurement.value,
       timestamp: measurement.timestamp,
     },
-    revalidate: 60,
   };
 }
 
@@ -22,6 +20,7 @@ function calculateMinutesAgo(otherDate: Date): number {
   const difference = currentDate.getTime() - otherDate.getTime();
   return Math.floor(difference / 1000 / 60);
 }
+
 export default function Home({
   temperature,
   timestamp,
