@@ -1,4 +1,4 @@
-version: "1.0"
+version: "3.9"
 services:
   web:
     build: pool-temp-web
@@ -11,6 +11,7 @@ services:
 
   backend:
     build: pool-temp-backend
+
     ports:
       - "3001:3000"
     networks:
@@ -24,7 +25,6 @@ services:
       - DB_PORT=5432
       - DB_USER=myuser
       - DB_PASSWORD=mypassword
-
 
   db:
     image: postgres
