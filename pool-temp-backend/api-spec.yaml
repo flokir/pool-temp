@@ -30,14 +30,12 @@ paths:
           schema:
             type: string
             format: date-time
-            example: 2017-07-21T17:32:28Z
           required: false
         - in: query
           name: endDate
           schema:
             type: string
             format: date-time
-            example: 2017-07-21T17:32:28Z
           required: false
       responses:
         200:
@@ -61,6 +59,16 @@ paths:
         500:
           $ref: '#/components/responses/ErrorResponse'
 
+  /sensors:
+    get:
+      tags:
+        - sensors
+      description: Get a list of all sensors
+      responses:
+        200:
+          $ref: '#/components/responses/SensorListResponse'
+        500:
+          $ref: '#/components/responses/ErrorResponse'
 components:
   requestBodies:
     MeasurementRequest:
@@ -71,6 +79,17 @@ components:
             $ref: '#/components/schemas/Measurement'
 
   responses:
+    SensorListResponse:
+      description: Represents a list of sensors
+      content:
+        application/json:
+          schema:
+            properties:
+              items:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Sensor'
+
     MeasurementListResponse:
       description: Represents a single measurement
       content:
@@ -97,6 +116,19 @@ components:
             $ref: '#/components/schemas/ErrorResponseBody'
 
   schemas:
+    Sensor:
+      required:
+        - name
+        - id
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        name:
+          type: string
+          example: Pool Outdoor
+
     Measurement:
       required:
         - value

@@ -15,7 +15,7 @@ The software consists of an API (pool-temp-backend) and a webinterface (pool-tem
 
 The specification of the API can be found here (API-spec)[pool-temp-backend/api-spec.yaml]
 # Hardware
-Hardware is yet to be developed, however I am planning on using an ESP-32 in combination with a waterproof ds18b20 sensor to get precise measurements of the water temperature.
+Hardware is yet to be developed, however I am planning to use an ESP-32 in combination with a waterproof ds18b20 sensor to get precise measurements of the water temperature.
 
 # Running the software
 To run the software simply run the provided docker compose file with `docker compose run`.

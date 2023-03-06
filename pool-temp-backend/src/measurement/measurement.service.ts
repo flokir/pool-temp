@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { MeasurementEntity } from './measurement.entity';
-import { Repository } from 'typeorm';
+import { And, LessThanOrEqual, MoreThanOrEqual, Repository } from 'typeorm';
 
 @Injectable()
 export class MeasurementService {
@@ -25,10 +25,21 @@ export class MeasurementService {
     throw new NotFoundException();
   }
 
-  public async searchMeasurements() {
+  public async searchMeasurements(startDate: Date, endDate: Date) {
+    const timestampConstraints = [];
+    if (startDate) {
+      timestampConstraints.push(MoreThanOrEqual(startDate));
+    }
+    if (endDate) {
+      timestampConstraints.push(LessThanOrEqual(endDate));
+    }
+
     return this.measurementRepository.find({
       order: {
         timestamp: 'desc',
+      },
+      where: {
+        timestamp: And(...timestampConstraints),
       },
     });
   }

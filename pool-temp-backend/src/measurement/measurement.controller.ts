@@ -1,7 +1,8 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 import { MeasurementService } from './measurement.service';
 import { MeasurementDto } from './dto/measurement.dto';
 import { MeasurementListDto } from './dto/measurement-list.dto';
+import { SearchMeasurementsDto } from './dto/search-measurements.dto';
 
 @Controller('')
 export class MeasurementController {
@@ -15,8 +16,14 @@ export class MeasurementController {
   }
 
   @Get()
-  public async searchMeasurements(): Promise<MeasurementListDto> {
-    const measurements = await this.measurementService.searchMeasurements();
+  public async searchMeasurements(
+    @Query() searchDto: SearchMeasurementsDto,
+  ): Promise<MeasurementListDto> {
+    const measurements = await this.measurementService.searchMeasurements(
+      searchDto.startDate,
+      searchDto.endDate,
+    );
+
     return {
       items: measurements.map((measurement) =>
         MeasurementDto.createFromMeasurement(measurement),
