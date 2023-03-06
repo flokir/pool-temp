@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { MeasurementEntity } from '../measurement/measurement.entity';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @Module({

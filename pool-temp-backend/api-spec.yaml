@@ -60,6 +60,23 @@ paths:
           $ref: '#/components/responses/ErrorResponse'
 
   /sensors:
+    post:
+      tags:
+        - sensors
+      description: Create a new sensor
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Sensor'
+      responses:
+        200:
+          $ref: '#/components/responses/SensorResponse'
+        400:
+          $ref: '#/components/responses/ErrorResponse'
+        500:
+          $ref: '#/components/responses/ErrorResponse'
+
     get:
       tags:
         - sensors
@@ -89,6 +106,13 @@ components:
                 type: array
                 items:
                   $ref: '#/components/schemas/Sensor'
+
+    SensorResponse:
+      description: Represents a sensor
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Sensor'
 
     MeasurementListResponse:
       description: Represents a single measurement

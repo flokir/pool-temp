@@ -1,5 +1,6 @@
 import * as process from 'process';
 import { MeasurementEntity } from '../measurement/measurement.entity';
+import { SensorEntity } from '../sensor/sensor.entity';
 
 export default () => ({
   database: {
@@ -9,7 +10,7 @@ export default () => ({
     port: process.env.DB_PORT || 5432,
     username: process.env.DB_USER || 'myuser',
     password: process.env.DB_PASSWORD || 'mypassword',
-    entities: [MeasurementEntity],
+    entities: [MeasurementEntity, SensorEntity],
     synchronize: true,
   },
 });

@@ -3,6 +3,7 @@ import { MeasurementModule } from './measurement/measurement.module';
 import { RouterModule } from '@nestjs/core';
 import { DatabaseModule } from './database/database.module';
 import { ConfigModule } from '@nestjs/config';
+import { SensorModule } from './sensor/sensor.module';
 import databaseConfiguration from './config/database-configuration';
 
 @Module({
@@ -21,10 +22,15 @@ import databaseConfiguration from './config/database-configuration';
             path: 'measurements',
             module: MeasurementModule,
           },
+          {
+            path: 'sensors',
+            module: SensorModule,
+          },
         ],
       },
     ]),
     DatabaseModule,
+    SensorModule,
   ],
 })
 export class AppModule {}
