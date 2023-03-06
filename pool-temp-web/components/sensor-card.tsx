@@ -1,15 +1,11 @@
-import {
-  CategoryScale,
-  Chart,
-  LinearScale,
-  LineController,
-  LineElement,
-  PointElement,
-} from "chart.js";
-import { Line } from "react-chartjs-2";
 import { getEndpointUrl } from "@/utils/api-utils";
 import { useEffect, useState } from "react";
+import TemperatureChart from "@/components/temperature-chart";
 
+interface HistoryItem {
+  value: number;
+  timestamp: Date;
+}
 async function fetchCurrentTemperature() {
   const res = await fetch(getEndpointUrl("/api/v1/measurements/current"));
   if (res.ok) {
@@ -20,6 +16,21 @@ async function fetchCurrentTemperature() {
     };
   }
   return undefined;
+}
+
+async function fetchTemperatureHistory(): Promise<HistoryItem[]> {
+  const res = await fetch(getEndpointUrl("/api/v1/measurements"));
+  if (res.ok) {
+    const json = await res.json();
+    return json.items.map((item: { value: number; timestamp: string }) => {
+      return {
+        value: item.value,
+        timestamp: new Date(Date.parse(item.timestamp)),
+      };
+    });
+  } else {
+    return [];
+  }
 }
 
 function calculateMinutesAgo(otherDate: Date): number {
@@ -38,7 +49,9 @@ export default function SensorCard() {
   }>({
     minutesAgo: 0,
   });
-  const labels = ["1", "2", "3", "4", "5", "6", "7"];
+  const [dataPoints, setDataPoints] = useState<number[]>([]);
+  const [labels, setLabels] = useState<Date[]>([]);
+
   useEffect(() => {
     fetchCurrentTemperature().then((currentTemperature) => {
       if (currentTemperature) {
@@ -49,27 +62,11 @@ export default function SensorCard() {
         setIsLoading(false);
       }
     });
+    fetchTemperatureHistory().then((history) => {
+      setLabels(history.map((item) => item.timestamp));
+      setDataPoints(history.map((item) => item.value));
+    });
   }, []);
-
-  Chart.register([
-    LineController,
-    CategoryScale,
-    LinearScale,
-    PointElement,
-    LineElement,
-  ]);
-  const data = {
-    labels: labels,
-    datasets: [
-      {
-        label: "My First Dataset",
-        data: [65, 59, 80, 81, 56, 55, 40],
-        fill: false,
-        borderColor: "rgb(75, 192, 192)",
-        tension: 0.1,
-      },
-    ],
-  };
 
   return (
     <div>
@@ -98,7 +95,10 @@ export default function SensorCard() {
               </p>
               <p>{temperature.timestamp?.toLocaleString()}</p>
               <div hidden={collapse} className="mt-4">
-                <Line data={data}></Line>
+                <TemperatureChart
+                  dataPoints={dataPoints}
+                  labels={labels}
+                ></TemperatureChart>
               </div>
             </div>
           )}

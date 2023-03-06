@@ -6,7 +6,7 @@ export default function Document() {
     <Html lang="en">
       <Head />
       <body className="bg-black">
-        <div className="flex flex-wrap items-center justify-between bg-emerald-500 px-4 lg:px-8 py-6">
+        <div className="flex flex-wrap items-center justify-between bg-emerald-600 px-4 lg:px-8 py-6">
           <ul className="flex w-full flex-row">
             <p className="my-auto block text-2xl">PoolTemp</p>
 
