@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { SensorEntity } from '../sensor/sensor.entity';
 
 @Entity('measurement')
 export class MeasurementEntity {
@@ -16,4 +17,9 @@ export class MeasurementEntity {
     type: 'float',
   })
   value: number;
+
+  @ManyToOne(() => SensorEntity, (entity) => entity.measurements, {
+    nullable: false,
+  })
+  sensor: SensorEntity;
 }

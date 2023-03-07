@@ -5,11 +5,18 @@ info:
 servers:
   - url: /api/v1
 paths:
-  /measurements:
+  /sensors/{sensorId}/measurements:
     post:
       tags:
         - measurements
       description: Create a new measurement
+      parameters:
+        - in: path
+          name: sensorId
+          schema:
+            type: string
+            format: uuid
+          required: true
       requestBody:
         $ref: '#/components/requestBodies/MeasurementRequest'
       responses:
@@ -25,6 +32,12 @@ paths:
         - measurements
       description: Query existing measurements, ordered by timestamp descending, between start and end date
       parameters:
+        - in: path
+          name: sensorId
+          schema:
+            type: string
+            format: uuid
+          required: true
         - in: query
           name: startDate
           schema:
@@ -46,11 +59,18 @@ paths:
           $ref: '#/components/responses/ErrorResponse'
 
 
-  /measurements/current:
+  /sensors/{sensorId}/measurements/current:
     get:
       tags:
         - measurements
       description: Get the current temperature
+      parameters:
+        - in: path
+          name: sensorId
+          schema:
+            type: string
+            format: uuid
+          required: true
       responses:
         200:
           $ref: '#/components/responses/MeasurementResponse'

@@ -1,6 +1,7 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { MeasurementEntity } from '../measurement/measurement.entity';
 
-@Entity()
+@Entity('sensor')
 export class SensorEntity {
   constructor(init: Partial<SensorEntity>) {
     Object.assign(this, init);
@@ -11,4 +12,7 @@ export class SensorEntity {
 
   @Column()
   name: string;
+
+  @OneToMany(() => MeasurementEntity, (entity) => entity.sensor)
+  measurements: MeasurementEntity[];
 }

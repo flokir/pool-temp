@@ -19,7 +19,7 @@ import databaseConfiguration from './config/database-configuration';
         path: 'api/v1',
         children: [
           {
-            path: 'measurements',
+            path: '/sensors/:sensorId/measurements',
             module: MeasurementModule,
           },
           {

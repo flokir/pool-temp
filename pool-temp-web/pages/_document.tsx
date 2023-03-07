@@ -8,7 +8,7 @@ export default function Document() {
       <body className="bg-black">
         <div className="flex flex-wrap items-center justify-between bg-emerald-600 px-4 lg:px-8 py-6">
           <ul className="flex w-full flex-row">
-            <p className="my-auto block text-2xl">PoolTemp</p>
+            <p className="my-auto block text-2xl text-black">PoolTemp</p>
 
             <Link
               href="/"

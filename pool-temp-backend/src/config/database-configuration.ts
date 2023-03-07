@@ -12,5 +12,6 @@ export default () => ({
     password: process.env.DB_PASSWORD || 'mypassword',
     entities: [MeasurementEntity, SensorEntity],
     synchronize: true,
+    logging: true,
   },
 });

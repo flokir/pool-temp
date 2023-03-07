@@ -1,13 +1,21 @@
 import { getEndpointUrl } from "@/utils/api-utils";
 import { useEffect, useState } from "react";
 import TemperatureChart from "@/components/temperature-chart";
+import {
+  ApiState,
+  DataState,
+  ErrorState,
+  LoadingState,
+} from "@/common/api-state";
 
 interface HistoryItem {
   value: number;
   timestamp: Date;
 }
-async function fetchCurrentTemperature() {
-  const res = await fetch(getEndpointUrl("/api/v1/measurements/current"));
+async function fetchCurrentTemperature(sensorId: string) {
+  const res = await fetch(
+    getEndpointUrl(`/api/v1/sensors/${sensorId}/measurements/current`)
+  );
   if (res.ok) {
     const measurement = await res.json();
     return {
@@ -18,8 +26,12 @@ async function fetchCurrentTemperature() {
   return undefined;
 }
 
-async function fetchTemperatureHistory(): Promise<HistoryItem[]> {
-  const res = await fetch(getEndpointUrl("/api/v1/measurements"));
+async function fetchTemperatureHistory(
+  sensorId: string
+): Promise<HistoryItem[]> {
+  const res = await fetch(
+    getEndpointUrl(`/api/v1/sensors/${sensorId}/measurements`)
+  );
   if (res.ok) {
     const json = await res.json();
     return json.items.map((item: { value: number; timestamp: string }) => {
@@ -39,9 +51,16 @@ function calculateMinutesAgo(otherDate: Date): number {
   return Math.floor(difference / 1000 / 60);
 }
 
-export default function SensorCard() {
+export default function SensorCard({
+  sensorId,
+  name,
+}: {
+  sensorId: string;
+  name: string;
+}) {
   const [collapse, setCollapse] = useState(true);
-  const [isLoading, setIsLoading] = useState(true);
+  const [apiState, setApiState] = useState<ApiState>(LoadingState);
+
   const [temperature, setTemperature] = useState<{
     temperature?: number;
     timestamp?: Date;
@@ -49,24 +68,34 @@ export default function SensorCard() {
   }>({
     minutesAgo: 0,
   });
+
+  const [historyApiState, setHistoryApiState] =
+    useState<ApiState>(LoadingState);
   const [dataPoints, setDataPoints] = useState<number[]>([]);
   const [labels, setLabels] = useState<Date[]>([]);
 
   useEffect(() => {
-    fetchCurrentTemperature().then((currentTemperature) => {
-      if (currentTemperature) {
-        setTemperature({
-          ...currentTemperature,
-          minutesAgo: calculateMinutesAgo(currentTemperature.timestamp),
-        });
-        setIsLoading(false);
-      }
-    });
-    fetchTemperatureHistory().then((history) => {
-      setLabels(history.map((item) => item.timestamp));
-      setDataPoints(history.map((item) => item.value));
-    });
-  }, []);
+    if (collapse) {
+      fetchCurrentTemperature(sensorId).then((currentTemperature) => {
+        if (currentTemperature) {
+          setTemperature({
+            ...currentTemperature,
+            minutesAgo: calculateMinutesAgo(currentTemperature.timestamp),
+          });
+          setApiState(DataState);
+          return;
+        }
+        setApiState(ErrorState);
+      });
+    }
+    if (!collapse) {
+      fetchTemperatureHistory(sensorId).then((history) => {
+        setLabels(history.map((item) => item.timestamp));
+        setDataPoints(history.map((item) => item.value));
+        setHistoryApiState(DataState);
+      });
+    }
+  }, [collapse, sensorId]);
 
   return (
     <div>
@@ -78,7 +107,7 @@ export default function SensorCard() {
       >
         <div className="bg-emerald-600 text-white px-4 py-4 rounded-lg min-h-32">
           <div className="flow-root">
-            <h1 className="float-left text-2xl">Sensor 1</h1>
+            <h1 className="float-left text-2xl">{name}</h1>
             <p className="float-right">
               {temperature.minutesAgo === 0
                 ? "Just now"
@@ -87,18 +116,22 @@ export default function SensorCard() {
                 : ""}
             </p>
           </div>
-          {isLoading && <p>Loading...</p>}
-          {!isLoading && (
+          {apiState.error && <p>No data</p>}
+          {apiState.loading && <p>Loading...</p>}
+          {apiState.data && (
             <div>
               <p className="text-xl">
                 Current temperature: {temperature.temperature}°C
               </p>
               <p>{temperature.timestamp?.toLocaleString()}</p>
               <div hidden={collapse} className="mt-4">
-                <TemperatureChart
-                  dataPoints={dataPoints}
-                  labels={labels}
-                ></TemperatureChart>
+                {historyApiState.loading && <p>Loading...</p>}
+                {historyApiState.data && (
+                  <TemperatureChart
+                    dataPoints={dataPoints}
+                    labels={labels}
+                  ></TemperatureChart>
+                )}
               </div>
             </div>
           )}
