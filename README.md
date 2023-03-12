@@ -7,6 +7,7 @@ A web-based software to track the temperature of any swimming pool or other sens
 - [x] Up-to-date measurements can be collected via API
 - [x] Responsive to support mobile devices
 - [x] Support multiple sensors
+- [ ] Api keys to authenticate sensors
 
 # Result
 ![Image of the webinterface](result.png)
