@@ -8,17 +8,17 @@ export default function Document() {
       <body className="bg-black">
         <div className="flex flex-wrap items-center justify-between bg-emerald-600 px-4 lg:px-8 py-6">
           <ul className="flex w-full flex-row">
-            <p className="my-auto block text-2xl text-black">PoolTemp</p>
+            <p className="my-auto block text-2xl text-white">PoolTemp</p>
 
             <Link
               href="/"
-              className=" ml-4 lg:ml-8 my-auto text-xl block hover:text-white text-black"
+              className=" ml-4 lg:ml-8 my-auto text-xl block hover:text-white text-white"
             >
               Home
             </Link>
             <Link
               href="/sensors"
-              className="mx-4 my-auto text-xl block hover:text-white text-black"
+              className="mx-4 my-auto text-xl block hover:text-white text-white"
             >
               Sensors
             </Link>
